@@ -1,0 +1,31 @@
+
+# PortAudio build
+
+COMMON_FILES = glob(["src/common/*.c", "src/common/*.h"] + glob(["include/*.h"]))
+UNIX_FILES = glob(["src/os/unix/*.c", "src/os/unix/*.h"])
+OSS_FILES = glob(["src/hostapi/oss/pa_unix_oss.c"])
+ALSA_FILES = glob(["src/hostapi/alsa/pa_linux_alsa.c"])
+
+cc_library(
+  name = "portaudio",
+  hdrs = ["include/portaudio.h"],
+  srcs = COMMON_FILES + UNIX_FILES + OSS_FILES + ALSA_FILES,
+  visibility = ["//visibility:public"],
+  includes = ["include"],
+  copts = ["-Iexternal/portaudio/src/common",
+           "-Iexternal/portaudio/src/os/unix",
+           "-DPA_USE_OSS=1",
+           "-DPA_USE_ALSA=1",
+           "-DHAVE_SYS_SOUNDCARD_H=1",
+           "-DHAVE_LINUX_SOUNDCARD_H=1",
+           "-DHAVE_NANOSLEEP=1",
+           "-DHAVE_CLOCK_GETTIME=1",
+           "-DSIZEOF_LONG=8",
+           "-Wno-unused-but-set-variable",
+           "-Wno-unused-variable",
+           "-Wno-unused-function",
+           "-Wno-deprecated-declarations",
+           "-Wno-format-truncation",
+  ],
+  linkopts=["-lpthread"],
+)
