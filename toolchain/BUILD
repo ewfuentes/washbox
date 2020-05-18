@@ -8,6 +8,7 @@ cc_toolchain_suite(
     toolchains = {
       "aarch64": "aarch64_toolchain",
     }
+
 )
 
 filegroup(name="empty")
@@ -16,6 +17,8 @@ filegroup(
     name="all",
     srcs = [
         ":aarch64-none-linux-gnu-gcc.sh",
+        ":aarch64-none-linux-gnu-ld.sh",
+        ":aarch64-none-linux-gnu-ar.sh",
         "@aarch64_none_linux_gnu//:all",
     ]
 )
@@ -27,10 +30,11 @@ cc_toolchain(
     toolchain_identifier="aarch64-none-linux-gnu",
     toolchain_config=":aarch64_toolchain_config",
     all_files=":all",
+    ar_files=":all",
     compiler_files=":all",
-    dwp_files=":empty",
+    dwp_files=":all",
     linker_files=":all",
-    objcopy_files=":empty",
-    strip_files=":empty",
-    supports_param_files=0,
+    objcopy_files=":all",
+    strip_files=":all",
+    supports_param_files=1,
 )

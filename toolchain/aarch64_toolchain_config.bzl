@@ -6,12 +6,12 @@ def _impl(ctx):
     paths = [
       ("gcc", "aarch64-none-linux-gnu-gcc.sh"),
       ("ld", "aarch64-none-linux-gnu-gcc.sh"),
-      ("ar", "/bin/false"),
-      ("cpp", "/bin/false"),
-      ("gcov", "/bin/false"),
-      ("nm", "/bin/false"),
-      ("objdump", "/bin/false"),
-      ("strip", "/bin/false"),
+      ("ar", "aarch64-none-linux-gnu-ar.sh"),
+      ("cpp", "aarch64-none-linux-gnu-cpp.sh"),
+      ("gcov", "aarch64-none-linux-gnu-gcov.sh"),
+      ("nm", "aarch64-none-linux-gnu-nm.sh"),
+      ("objdump", "aarch64-none-linux-gnu-objdump.sh"),
+      ("strip", "aarch64-none-linux-gnu-strip.sh"),
     ]
     tool_paths = [tool_path(name=name, path=path) for name, path in paths]
 
@@ -24,7 +24,6 @@ def _impl(ctx):
                     ACTION_NAMES.assemble,
                     ACTION_NAMES.preprocess_assemble,
                     ACTION_NAMES.linkstamp_compile,
-                    ACTION_NAMES.c_compile,
                     ACTION_NAMES.cpp_compile,
                     ACTION_NAMES.cpp_header_parsing,
                     ACTION_NAMES.cpp_module_compile,
@@ -53,7 +52,33 @@ def _impl(ctx):
                         ]
                     )
                 ]
+            ),
+            flag_set(
+                actions = [
+                    ACTION_NAMES.c_compile,
+                ],
+                flag_groups = [
+                    flag_group(
+                        flags = [
+                            "-isystem",
+                            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include/c++/9.2.1",
+                            "-isystem",
+                            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu",
+                            "-isystem",
+                            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include/c++/9.2.1/backward",
+                            "-isystem",
+                            "external/aarch64_none_linux_gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include",
+                            "-isystem",
+                            "external/aarch64_none_linux_gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed",
+                            "-isystem",
+                            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include",
+                            "-isystem",
+                            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/libc/usr/include",
+                        ]
+                    )
+                ]
             )
+
         ]
     )
 

@@ -40,7 +40,9 @@ struct CallbackData {
   std::array<std::array<float,SAMPLE_RATE_HZ * 2>, 2> samples;
   double start_time = std::numeric_limits<double>::max();
   double time_to_generate_s = 1.0;
-  int num_frames = 0.0;
+  int num_frames = 0;
+  int num_callbacks = 0;
+  int max_channels = 0;
 };
 
 int main() {
@@ -79,11 +81,12 @@ int main() {
 
   PaStreamParameters stream_params{
       .device = output_device_idx,
-      .channelCount = 2,
+      .channelCount = 8,
       .sampleFormat = paFloat32 | paNonInterleaved,
       .suggestedLatency = dev_info.defaultHighOutputLatency};
 
   CallbackData data;
+  data.max_channels = 8;
   PaStream *stream;
   Pa_OpenStream(
       &stream,
@@ -104,25 +107,20 @@ int main() {
         constexpr float volume = 0.1;
         float **out_arrays = static_cast<float**>(output);
         bool should_exit = false;
+        int output_idx = (callback_data.num_callbacks / 100) % callback_data.max_channels;
         for (int i = 0; i < static_cast<int>(frame_count); i++) {
           const float t = callback_data.num_frames * dt;
-
-          const float value = volume * std::sin(2 * M_PI * 440 * t);
-          if (t < callback_data.start_time + 5.0) {
-            out_arrays[0][i] = value;
-            out_arrays[1][i] = value;
-          } else if (t < callback_data.start_time + 5.1){
-            const float gain = std::min(std::max(0.0, 5.250 - t), 1.0);
-            out_arrays[0][i] = gain * value;
-            out_arrays[1][i] = gain * value;
-          } else {
-            out_arrays[0][i] = 0.0;
-            out_arrays[1][i] = 0.0;
-            should_exit = true;
+          const float value = volume * std::sin(2 * M_PI * 6640 * t);
+          for (int j = 0; j < callback_data.max_channels; j++) {
+            out_arrays[j][i] = j == output_idx ? value : 0.0;
+          }
+          if (t > 5.0) {
+            should_exit = false;
           }
           callback_data.num_frames += 1;
         }
 
+        callback_data.num_callbacks++;
         if (should_exit) {
           return paComplete;
         } else {
