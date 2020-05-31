@@ -3,8 +3,13 @@ package(default_visibility = ["//visibility:public"])
 
 HEADER_FILES = glob(["include/alsa/*.h"])
 
+
+
 cc_import(
     name = "libasound2",
     hdrs = HEADER_FILES,
-    shared_library="lib/x86_64-linux-gnu/libasound.so.2"
+    shared_library=select({
+        "@//:aarch64": "lib/aarch64-linux-gnu/libasound.so.2",
+        "//conditions:default": "lib/x86_64-linux-gnu/libasound.so.2"
+    })
 )

@@ -6,13 +6,6 @@ UNIX_FILES = glob(["src/os/unix/*.c", "src/os/unix/*.h"])
 OSS_FILES = glob(["src/hostapi/oss/pa_unix_oss.c"])
 ALSA_FILES = glob(["src/hostapi/alsa/pa_linux_alsa.c"])
 
-config_setting(
-  name = "aarch64",
-  values = {
-    "cpu": "aarch64",
-  }
-)
-
 cc_library(
   name = "portaudio",
   hdrs = ["include/portaudio.h"],

@@ -1,12 +1,5 @@
 load("@io_bazel_rules_docker//container:image.bzl", "container_image")
 
-config_setting(
-    name = "aarch64",
-    values = {
-      "cpu": "aarch64"
-    }
-)
-
 cc_binary(
    name = "main",
    srcs = ["main.cc"],
@@ -14,7 +7,7 @@ cc_binary(
 
 container_image(
     name = "main_image",
-    base = select({":aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),
+    base = select({"//:aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),
     files = [":main"],
 )
 
@@ -26,7 +19,7 @@ cc_binary(
 
 container_image(
     name = "list_audio_devices_image",
-    base = select({":aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),
+    base = select({"//:aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),
     files = [":list_audio_devices"],
     legacy_run_behavior=False,
     cmd = ["./list_audio_devices"],
