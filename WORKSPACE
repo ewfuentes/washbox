@@ -2,6 +2,12 @@
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+new_local_repository(
+    name = "libasound2",
+    path = "/usr",
+    build_file = "@//third_party:BUILD.libasound2",
+)
+
 http_archive(
   name = "portaudio",
   urls = ["http://www.portaudio.com/archives/pa_stable_v190600_20161030.tgz"],
@@ -44,7 +50,13 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
 container_pull(
     name="aarch64_base",
     registry="index.docker.io",
-    repository="arm64v8/ubuntu",
-    tag="focal"
+    repository="ewfuentes/washbox",
+    tag="aarch64"
 )
 
+container_pull(
+    name="amd64_base",
+    registry="index.docker.io",
+    repository="ewfuentes/washbox",
+    tag="amd64"
+)

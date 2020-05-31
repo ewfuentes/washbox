@@ -16,15 +16,14 @@ config_setting(
 cc_library(
   name = "portaudio",
   hdrs = ["include/portaudio.h"],
-  srcs = COMMON_FILES + UNIX_FILES + OSS_FILES + select({
-      ":aarch64": [],
-      "//conditions:default": ALSA_FILES,
-      }),
+  srcs = COMMON_FILES + UNIX_FILES + OSS_FILES + ALSA_FILES,
   visibility = ["//visibility:public"],
   includes = ["include"],
   copts = ["-Iexternal/portaudio/src/common",
            "-Iexternal/portaudio/src/os/unix",
+           "-Iexternal/libasound2/include",
            "-DPA_USE_OSS=1",
+           "-DPA_USE_ALSA=1",
            "-DHAVE_SYS_SOUNDCARD_H=1",
            "-DHAVE_LINUX_SOUNDCARD_H=1",
            "-DHAVE_NANOSLEEP=1",
@@ -35,12 +34,9 @@ cc_library(
            "-Wno-unused-function",
            "-Wno-deprecated-declarations",
            "-Wno-format-truncation",
-  ] + select({
-      ":aarch64": [],
-      "//conditions:default": ["-DPA_USE_ALSA=1",],
-      }),
-  linkopts=["-lpthread"] + select({
-      "//conditions:default" : ["-lasound"],
-      ":aarch64": [""],
-  })
+  ],
+  linkopts=["-lpthread", "-lasound"],
+  deps = [
+    "@libasound2//:libasound2",
+  ]
 )

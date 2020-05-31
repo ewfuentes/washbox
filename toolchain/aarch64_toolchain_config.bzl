@@ -95,11 +95,13 @@ def _impl(ctx):
                 flag_groups = [
                     flag_group(
                         flags = [
+                            "-lm",
                             "-lstdc++",
                             "-Wl,-z,relro,-z,now",
                             "-pass-exit-codes",
                             "-Wl,--build-id=md5",
                             "-Wl,--hash-style=gnu",
+                            "-L/usr/lib/aarch64-linux-gnu",
                         ]
                     )
                 ]
@@ -120,13 +122,14 @@ def _impl(ctx):
         tool_paths = tool_paths,
         features = [toolchain_include_directories_feature, default_link_flags_feature],
         cxx_builtin_include_directories = [
-            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include/c++/9.2.1",
-            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu",
-            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include/c++/9.2.1/backward",
-            "external/aarch64_none_linux_gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include",
-            "external/aarch64_none_linux_gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed",
-            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include",
-            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/libc/usr/include",
+#            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include/c++/9.2.1",
+#            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include/c++/9.2.1/aarch64-none-linux-gnu",
+#            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include/c++/9.2.1/backward",
+#            "external/aarch64_none_linux_gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include",
+#            "external/aarch64_none_linux_gnu/lib/gcc/aarch64-none-linux-gnu/9.2.1/include-fixed",
+#            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/include",
+#            "external/aarch64_none_linux_gnu/aarch64-none-linux-gnu/libc/usr/include",
+#            "/usr/include",
         ]
     )
 

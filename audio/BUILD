@@ -1,4 +1,4 @@
-load("@io_bazel_rules_docker//cc:image.bzl", "cc_image")
+load("@io_bazel_rules_docker//container:image.bzl", "container_image")
 
 config_setting(
     name = "aarch64",
@@ -12,10 +12,10 @@ cc_binary(
    srcs = ["main.cc"],
 )
 
-cc_image(
+container_image(
     name = "main_image",
-    base = select({":aarch64": "@aarch64_base//image", "//conditions:default": "@cc_image_base//image"}),
-    binary = ":main",
+    base = select({":aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),
+    files = [":main"],
 )
 
 cc_binary(
@@ -24,3 +24,11 @@ cc_binary(
    deps = ["@portaudio//:portaudio"],
 )
 
+container_image(
+    name = "list_audio_devices_image",
+    base = select({":aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),
+    files = [":list_audio_devices"],
+    legacy_run_behavior=False,
+    cmd = ["./list_audio_devices"],
+    docker_run_flags = "--device /dev/snd",
+)
