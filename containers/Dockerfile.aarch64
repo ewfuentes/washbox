@@ -1,0 +1,2 @@
+FROM arm64v8/ubuntu:focal
+RUN apt-get update && apt-get install -y libasound2 && rm -rf /var/lib/apt/lists/*
