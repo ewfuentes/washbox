@@ -1,4 +1,5 @@
 
+build --copt="-std=c++14"
 
 build:aarch64 --crosstool_top=//toolchain:aarch64_suite
 build:aarch64 --cpu=aarch64

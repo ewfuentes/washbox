@@ -3,6 +3,17 @@ load("@io_bazel_rules_docker//container:image.bzl", "container_image")
 cc_binary(
    name = "main",
    srcs = ["main.cc"],
+   deps = [
+     "@cppzmq//:cppzmq",
+   ]
+)
+
+cc_binary(
+   name = "client",
+   srcs = ["client.cc"],
+   deps = [
+     "@cppzmq//:cppzmq",
+   ]
 )
 
 container_image(

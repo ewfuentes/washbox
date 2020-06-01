@@ -1,0 +1,8 @@
+cc_library(
+  name = "zmq",
+  hdrs = ["include/zmq.h"],
+  srcs = glob(["src/*.hpp", "src/*.cpp", "src/*.h", "src/*.c"]),
+  includes = ["include"],
+  visibility = ["//visibility:public"],
+  linkopts = ["-lpthread"],
+)

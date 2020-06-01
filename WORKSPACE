@@ -24,6 +24,23 @@ http_archive(
   build_file = "@//third_party:BUILD.aarch64_none_linux_gnu"
 )
 
+http_archive(
+  name = "zmq",
+  urls = ["https://github.com/zeromq/libzmq/archive/v4.3.2.tar.gz"],
+  strip_prefix="libzmq-4.3.2",
+  build_file = "@//third_party:BUILD.zmq",
+  sha256 = "02ecc88466ae38cf2c8d79f09cfd2675ba299a439680b64ade733e26a349edeb",
+  patches = ["@//third_party/zmq:platform_header.patch"],
+)
+
+http_archive(
+  name = "cppzmq",
+  urls = ["https://github.com/zeromq/cppzmq/archive/v4.6.0.tar.gz"],
+  strip_prefix="cppzmq-4.6.0",
+  sha256 = "e9203391a0b913576153a2ad22a2dc1479b1ec325beb6c46a3237c669aef5a52",
+  build_file="@//third_party:BUILD.cppzmq",
+)
+
 # Download the rules_docker repository at release v0.14.1
 http_archive(
     name = "io_bazel_rules_docker",
@@ -51,12 +68,12 @@ container_pull(
     name="aarch64_base",
     registry="index.docker.io",
     repository="ewfuentes/washbox",
-    tag="aarch64"
+    digest = "sha256:b6385536cff623761214061e54af735b25e2f4e4b1876cd24594a1e54424fdfa"
 )
 
 container_pull(
     name="amd64_base",
     registry="index.docker.io",
     repository="ewfuentes/washbox",
-    tag="amd64"
+    digest = "sha256:08e0be99c86ac7e7b30e91222061ee61d1ebe72e95b71e1b070f6a1f3cd48a2d"
 )
