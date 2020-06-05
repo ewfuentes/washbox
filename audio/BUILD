@@ -1,6 +1,24 @@
 load("@io_bazel_rules_docker//container:image.bzl", "container_image")
 
 cc_binary(
+  name = "microphone_publisher",
+  srcs = ["microphone_publisher.cc"],
+  deps = [
+    "@gflags//:gflags",
+    "@portaudio//:portaudio"
+  ]
+)
+
+container_image(
+    name = "microphone_publisher_image",
+    base = select({"//:aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),
+    files = [":microphone_publisher"],
+    legacy_run_behavior=False,
+    cmd = ["./microphone_publisher"],
+    docker_run_flags = "--device /dev/snd",
+)
+
+cc_binary(
    name = "main",
    srcs = ["main.cc"],
    deps = [
