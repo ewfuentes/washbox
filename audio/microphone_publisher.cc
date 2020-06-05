@@ -1,10 +1,13 @@
+#include <algorithm>
 #include <atomic>
 #include <array>
 #include <csignal>
+#include <chrono>
+#include <limits>
 #include <iostream>
 #include <iomanip>
 #include <memory>
-#include <optional>
+#include <thread>
 
 #include "gflags/gflags.h"
 #include "portaudio.h"
@@ -12,11 +15,12 @@
 namespace washbox {
   namespace audio {
     namespace {
+      using namespace std::chrono_literals;
       std::atomic<bool> should_exit = false;
     }
   struct SampleData {
     enum class BufferState {UNUSED, LOADING, READY};
-    std::atomic<BufferState> is_ready_to_publish = BufferState::UNUSED;
+    std::atomic<BufferState> state = BufferState::UNUSED;
     std::atomic<int> num_samples = 0;
     std::vector<std::array<float, 8192>> channel_data;
   };
@@ -31,6 +35,7 @@ namespace washbox {
 
     // Stream Callback State
     std::array<SampleData, 10> sample_data_buffers;
+    int num_buffers_processed = 0;
   };
 
   std::shared_ptr<int> initialize_portaudio() {
@@ -91,9 +96,48 @@ namespace washbox {
                   [](const void *input, void *, unsigned long frame_count,
                      const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags status_flags,
                      void *user_data) -> int {
+                    MicrophoneStream &stream = *static_cast<MicrophoneStream *>(user_data);
+
+                    // Find the first buffer that is large enough
+                    auto maybe_buffer_iter = std::find_if(stream.sample_data_buffers.begin(),
+                                 stream.sample_data_buffers.end(),
+                                 [](const auto &sample_data){
+                        return sample_data.state == SampleData::BufferState::LOADING;
+                    });
+
+                    if (maybe_buffer_iter == stream.sample_data_buffers.end()) {
+                      // We weren't in progress on any buffer, so let's grab the first one
+                      maybe_buffer_iter = stream.sample_data_buffers.begin();
+                      if (maybe_buffer_iter->state != SampleData::BufferState::UNUSED) {
+                        return paAbort;
+                      }
+                      maybe_buffer_iter->state = SampleData::BufferState::LOADING;
+                    } else {
+                      // We found a buffer that is loading, let's check that we can fit all of the
+                      // data in this buffer.
+                      if (frame_count + maybe_buffer_iter->num_samples >
+                          maybe_buffer_iter->channel_data[0].size()) {
+                        maybe_buffer_iter->state = SampleData::BufferState::READY;
+                        maybe_buffer_iter = ++maybe_buffer_iter == stream.sample_data_buffers.end() ?
+                          stream.sample_data_buffers.begin() : maybe_buffer_iter;
+                        if (maybe_buffer_iter->state != SampleData::BufferState::UNUSED) {
+                          return paAbort;
+                        }
+                        maybe_buffer_iter->state = SampleData::BufferState::LOADING;
+                      }
+                    }
+
+                    const float * const *input_samples = static_cast<const float *const *>(input);
+                    SampleData &sample_data = *maybe_buffer_iter;
+                    for (int channel_idx = 0; channel_idx < stream.device_info->maxInputChannels; channel_idx++) {
+                      for (int sample_idx = 0; sample_idx < static_cast<int>(frame_count); sample_idx++) {
+                        sample_data.channel_data[channel_idx][sample_idx] = input_samples[channel_idx][sample_idx];
+                      }
+                    }
+                    sample_data.num_samples += frame_count;
                     std::cout << "Processing samples: " << frame_count
                               << " " << timeInfo->inputBufferAdcTime
-                              << " flags: " << status_flags << std::endl;
+                              << " " << std::distance(stream.sample_data_buffers.begin(), maybe_buffer_iter)<< std::endl;
                     return paContinue;
                   },
                   &*out);
@@ -127,8 +171,18 @@ namespace washbox {
     Pa_StartStream(maybe_stream->stream);
     // Publish Samples
     std::cout << std::setprecision(10);
-    while (!should_exit) {
+    while (!should_exit && Pa_IsStreamActive(maybe_stream->stream)) {
+      // Scan through the data buffers and find any that are ready
+      for (auto &sample_data : maybe_stream->sample_data_buffers) {
+        if (sample_data.state != SampleData::BufferState::READY) {
+          continue;
+        }
 
+        sample_data.num_samples = 0;
+        sample_data.state = SampleData::BufferState::UNUSED;
+      }
+
+      std::this_thread::sleep_for(100ms);
     }
 
     Pa_StopStream(maybe_stream->stream);
