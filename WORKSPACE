@@ -41,6 +41,14 @@ http_archive(
   build_file="@//third_party:BUILD.cppzmq",
 )
 
+http_archive(
+  name = "gflags",
+  urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
+  sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
+  strip_prefix="gflags-2.2.2",
+)
+
+
 # Download the rules_docker repository at release v0.14.1
 http_archive(
     name = "io_bazel_rules_docker",
