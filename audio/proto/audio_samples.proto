@@ -1,0 +1,11 @@
+
+syntax = "proto2";
+
+package washbox.audio.proto;
+
+message AudioSamples {
+    message Samples { repeated double samples = 1; }
+    optional double time_of_validity = 1;
+    optional double sample_rate = 2;
+    repeated Samples channel_data = 3;
+}

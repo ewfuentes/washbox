@@ -1,11 +1,19 @@
 load("@io_bazel_rules_docker//container:image.bzl", "container_image")
 
+cc_library(
+  name = "audio_samples",
+  hdrs = ["audio_samples.hh"],
+  visibility = ["//audio:__subpackages__"],
+)
+
 cc_binary(
   name = "microphone_publisher",
   srcs = ["microphone_publisher.cc"],
   deps = [
+    "//audio/proto:audio_samples_to_proto",
     "@gflags//:gflags",
-    "@portaudio//:portaudio"
+    "@portaudio//:portaudio",
+     "@cppzmq//:cppzmq",
   ]
 )
 
