@@ -17,6 +17,15 @@ cc_binary(
   ]
 )
 
+cc_binary(
+  name = "audio_recorder",
+  srcs = ["audio_recorder.cc"],
+  deps = [
+    "@gflags//:gflags",
+    "@cppzmq//:cppzmq",
+  ],
+)
+
 container_image(
     name = "microphone_publisher_image",
     base = select({"//:aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),

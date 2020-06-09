@@ -197,24 +197,13 @@ void microphone_publisher(const int device_index) {
             if (buffer.state != Buffer::BufferState::READY) {
                 continue;
             }
-            const auto start_time = std::chrono::steady_clock::now();
             pack_into(buffer.sample_data, &audio_samples_proto);
-            const auto pack_time = std::chrono::steady_clock::now();
             proto_string.clear();
             audio_samples_proto.SerializeToString(&proto_string);
-            const auto serialize_time = std::chrono::steady_clock::now();
 
             const zmq::send_result_t result =
                 socket.send(zmq::const_buffer(proto_string.c_str(), proto_string.size()),
                             zmq::send_flags::dontwait);
-            const auto send_time = std::chrono::steady_clock::now();
-            std::cout << "   pack time: "
-                      << std::chrono::duration<double>(pack_time - start_time).count()
-                      << " serial time: "
-                      << std::chrono::duration<double>(serialize_time - pack_time).count()
-                      << " send time: "
-                      << std::chrono::duration<double>(send_time - serialize_time).count()
-                      << " size: " << proto_string.size() << std::endl;
             if (!result) {
                 std::cout << "Unable to send" << std::endl;
             }
@@ -234,7 +223,6 @@ void microphone_publisher(const int device_index) {
 }
 
 } // namespace washbox::audio
-} // namespace washbox
 
 DEFINE_int32(device_index, -1,
              "PortAudio Device Index. "
