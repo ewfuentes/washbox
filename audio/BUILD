@@ -23,6 +23,7 @@ cc_binary(
   deps = [
     "@gflags//:gflags",
     "@cppzmq//:cppzmq",
+    "//audio/proto:audio_samples_to_proto",
   ],
 )
 
