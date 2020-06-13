@@ -1,0 +1,24 @@
+
+syntax = "proto2";
+
+package washbox.logging.proto;
+
+// The index contains a pointer to every record in a log for a particular topic
+message Index {
+  message Entry {
+    // An index into the `data_files` field
+    optional int32 data_file_idx = 1;
+
+    // A byte index into the file for this message
+    optional int64 data_idx = 2;
+  }
+
+  // The protobuf name
+  optional string message_type = 1;
+
+  // List of data files associated with this log
+  repeated string data_files = 2;
+  
+  // List of records associated with this entry
+  repeated Entry entries = 3;
+}
