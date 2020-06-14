@@ -1,4 +1,6 @@
 
+package(default_visibility=["//common/logging:__subpackages__"])
+
 proto_library(
   name = "log_proto",
   srcs = ["log.proto"],

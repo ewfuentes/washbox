@@ -13,8 +13,8 @@ message Index {
     optional int64 data_idx = 2;
   }
 
-  // The protobuf name
-  optional string message_type = 1;
+  // Type of proto file stored
+  optional string message_name = 1;
 
   // List of data files associated with this log
   repeated string data_files = 2;
