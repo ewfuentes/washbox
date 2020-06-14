@@ -64,6 +64,14 @@ http_archive(
 )
 
 
+http_archive(
+  name = "gtest",
+  urls = ["https://github.com/google/googletest/archive/release-1.10.0.tar.gz"],
+  strip_prefix="googletest-release-1.10.0",
+  sha256 = "9dc9157a9a1551ec7a7e43daea9a694a0bb5fb8bec81235d8a1e6ef64c716dcb",
+)
+
+
 # Download the rules_docker repository at release v0.14.1
 http_archive(
     name = "io_bazel_rules_docker",
