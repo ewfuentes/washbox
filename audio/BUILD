@@ -38,28 +38,6 @@ container_image(
 )
 
 cc_binary(
-   name = "main",
-   srcs = ["main.cc"],
-   deps = [
-     "@cppzmq//:cppzmq",
-   ]
-)
-
-cc_binary(
-   name = "client",
-   srcs = ["client.cc"],
-   deps = [
-     "@cppzmq//:cppzmq",
-   ]
-)
-
-container_image(
-    name = "main_image",
-    base = select({"//:aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),
-    files = [":main"],
-)
-
-cc_binary(
    name = "list_audio_devices",
    srcs = ["list_audio_devices.cc"],
    deps = ["@portaudio//:portaudio"],
