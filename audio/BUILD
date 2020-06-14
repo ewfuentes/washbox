@@ -28,6 +28,30 @@ cc_binary(
   ],
 )
 
+cc_binary(
+   name = "list_audio_devices",
+   srcs = ["list_audio_devices.cc"],
+   deps = ["@portaudio//:portaudio"],
+)
+
+cc_library(
+   name = "wav_file",
+   hdrs = ["wav_file.hh"],
+   srcs = ["wav_file.cc"],
+   deps = [
+     ":audio_samples",
+   ]
+)
+
+cc_test(
+   name = "wav_file_test",
+   srcs = ["wav_file_test.cc"],
+   deps = [
+     ":wav_file",
+     "@gtest//:gtest_main",
+   ]
+)
+
 container_image(
     name = "microphone_publisher_image",
     base = select({"//:aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),
@@ -35,12 +59,6 @@ container_image(
     legacy_run_behavior=False,
     cmd = ["./microphone_publisher"],
     docker_run_flags = "--device /dev/snd",
-)
-
-cc_binary(
-   name = "list_audio_devices",
-   srcs = ["list_audio_devices.cc"],
-   deps = ["@portaudio//:portaudio"],
 )
 
 container_image(
