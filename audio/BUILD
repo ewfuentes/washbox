@@ -24,6 +24,7 @@ cc_binary(
     "@gflags//:gflags",
     "@cppzmq//:cppzmq",
     "//audio/proto:audio_samples_to_proto",
+    "//common/logging:log_writer",
   ],
 )
 
