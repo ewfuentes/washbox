@@ -1,5 +1,5 @@
 
-build --copt="-std=c++17"
+build --cxxopt="-std=c++17" -c opt
 
 build:aarch64 --crosstool_top=//toolchain:aarch64_suite
 build:aarch64 --cpu=aarch64
