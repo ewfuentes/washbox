@@ -3,7 +3,6 @@
 
 #include <cmath>
 #include <cstdint>
-#include <fstream>
 #include <sstream>
 
 #include "gtest/gtest.h"
@@ -133,10 +132,6 @@ TEST(WavFileTest, SingleChannelSingleBuffer) {
     // VERIFICATION
     check_is_valid_wav(data.str(), samples.channel_data.size(), samples.channel_data.front().size(),
                        samples.sample_rate);
-
-    std::ofstream out("test1.wav", std::ios::binary);
-    const std::string data_str = data.str();
-    out.write(data_str.c_str(), data_str.size());
 }
 
 TEST(WavFileTest, DualChannelSingleBuffer) {
@@ -152,10 +147,6 @@ TEST(WavFileTest, DualChannelSingleBuffer) {
     // VERIFICATION
     check_is_valid_wav(data.str(), samples.channel_data.size(), samples.channel_data.front().size(),
                        samples.sample_rate);
-
-    std::ofstream out("test2.wav", std::ios::binary);
-    const std::string data_str = data.str();
-    out.write(data_str.c_str(), data_str.size());
 }
 
 TEST(WavFileTest, DualChannelMultiBuffer) {
@@ -172,9 +163,5 @@ TEST(WavFileTest, DualChannelMultiBuffer) {
     // VERIFICATION
     check_is_valid_wav(data.str(), samples.channel_data.size(),
                        samples.channel_data.front().size() * 2, samples.sample_rate);
-
-    std::ofstream out("test3.wav", std::ios::binary);
-    const std::string data_str = data.str();
-    out.write(data_str.c_str(), data_str.size());
 }
 } // namespace washbox::audio
