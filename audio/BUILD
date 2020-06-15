@@ -52,6 +52,17 @@ cc_test(
    ]
 )
 
+cc_binary(
+  name = "wav_from_log",
+  srcs = ["wav_from_log.cc"],
+  deps = [
+    ":wav_file",
+    "//audio/proto:audio_samples_to_proto",
+    "//common/logging/proto:log_proto_cc",
+    "@gflags//:gflags",
+  ]
+)
+
 container_image(
     name = "microphone_publisher_image",
     base = select({"//:aarch64": "@aarch64_base//image", "//conditions:default": "@amd64_base//image"}),

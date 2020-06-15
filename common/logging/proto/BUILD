@@ -1,5 +1,6 @@
 
-package(default_visibility=["//common/logging:__subpackages__"])
+# Fix it so that this no longer needs to be publicly visible
+package(default_visibility=["//visibility:public"])
 
 proto_library(
   name = "log_proto",
